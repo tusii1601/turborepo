@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { Button, Input, Card, CardHeader, CardTitle, CardContent, Alert } from "@repo/ui";
 import { signIn } from "next-auth/react";
+import { Github, Mail } from "lucide-react";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -47,7 +48,7 @@ export default function LoginPage() {
             <Alert type="error" message={error} className="mb-6" />
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit} className="space-y-4 mb-6">
             <Input
               label="Email"
               type="email"
@@ -76,7 +77,39 @@ export default function LoginPage() {
             </Button>
           </form>
 
-          <div className="mt-6 text-center">
+          {/* OAuth Providers */}
+          <div className="space-y-3 mb-6">
+            <div className="relative">
+              <div className="absolute inset-0 flex items-center">
+                <div className="w-full border-t border-slate-300"></div>
+              </div>
+              <div className="relative flex justify-center text-sm">
+                <span className="px-2 bg-white text-slate-500">Or continue with</span>
+              </div>
+            </div>
+
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => signIn("google")}
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <Mail className="w-4 h-4" />
+              Google
+            </Button>
+
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => signIn("github")}
+              className="w-full flex items-center justify-center gap-2"
+            >
+              <Github className="w-4 h-4" />
+              GitHub
+            </Button>
+          </div>
+
+          <div className="text-center">
             <p className="text-slate-600">
               Don't have an account?{" "}
               <a href="/signup" className="text-blue-600 hover:underline">

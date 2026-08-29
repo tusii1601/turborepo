@@ -4,15 +4,22 @@ import { hashPassword } from "@repo/auth";
 import {
   baseConfig,
   getCredentialsProvider,
+  getGoogleProvider,
+  getGithubProvider,
 } from "@repo/auth/config";
 
 /**
  * Auth configuration for the monorepo
  * Used by all applications
+ * Supports: Credentials (email/password), Google OAuth, GitHub OAuth
  */
 const authConfig: NextAuthConfig = {
   ...baseConfig,
-  providers: [getCredentialsProvider()],
+  providers: [
+    getCredentialsProvider(),
+    ...(process.env.AUTH_GOOGLE_ID ? [getGoogleProvider()] : []),
+    ...(process.env.AUTH_GITHUB_ID ? [getGithubProvider()] : []),
+  ],
   callbacks: {
     ...baseConfig.callbacks,
     async signIn({ user, account }) {
@@ -35,6 +42,12 @@ const authConfig: NextAuthConfig = {
             image: user.image,
             emailVerified: new Date(),
           },
+        });
+      } else if (!existingUser.emailVerified) {
+        // Verify email if using OAuth
+        await prisma.user.update({
+          where: { id: existingUser.id },
+          data: { emailVerified: new Date() },
         });
       }
 
