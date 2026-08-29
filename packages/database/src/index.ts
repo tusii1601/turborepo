@@ -1,2 +1,2 @@
-// Empty index file for database package
-// Prisma client will be exported in Phase 4
+export { prisma, default } from "./client";
+export * from "./validation";
