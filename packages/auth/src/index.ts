@@ -1,2 +1,4 @@
-// Empty index file for auth package
-// Auth configuration will be added in Phase 6
+// Authentication & Authorization Module
+export * from "./config";
+export * from "./authorization";
+export * from "./password";
