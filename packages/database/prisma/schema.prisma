@@ -1,0 +1,19 @@
+// This file will be created in Phase 4
+// It will contain the complete Prisma schema for the URL shortener
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// Models will be added:
+// - User
+// - Account
+// - Session
+// - VerificationToken
+// - ShortLink
+// - Click
