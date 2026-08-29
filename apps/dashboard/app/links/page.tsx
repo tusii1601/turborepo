@@ -5,6 +5,7 @@ import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { Card, CardHeader, CardTitle, CardContent, Table, LoadingSpinner, CopyButton, Badge } from "@repo/ui";
 import { Trash2, Eye, Edit } from "lucide-react";
+import Link from "next/link";
 
 interface ShortLink {
   id: string;
@@ -97,15 +98,18 @@ export default function LinksPage() {
     created: new Date(link.createdAt).toLocaleDateString(),
     actions: (
       <div className="flex items-center gap-2">
-        <button className="p-1 hover:bg-slate-200 rounded">
-          <Eye className="w-4 h-4" />
-        </button>
-        <button className="p-1 hover:bg-slate-200 rounded">
+        <Link href={`/dashboard/links/${link.id}`}>
+          <button className="p-1 hover:bg-slate-200 rounded" title="View analytics">
+            <Eye className="w-4 h-4" />
+          </button>
+        </Link>
+        <button className="p-1 hover:bg-slate-200 rounded" title="Edit link" disabled>
           <Edit className="w-4 h-4" />
         </button>
         <button
           onClick={() => deleteLink(link.id)}
           className="p-1 hover:bg-red-100 rounded"
+          title="Delete link"
         >
           <Trash2 className="w-4 h-4 text-red-600" />
         </button>
