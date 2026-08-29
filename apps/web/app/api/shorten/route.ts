@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma, generateSlug, urlSchema, slugSchema, calculateExpiration, EXPIRATION_OPTIONS } from "@repo/database";
 import { auth } from "@repo/auth/auth";
 import { z } from "zod";
+import { checkRateLimit, getRateLimitKey, getRemainingRequests, getResetTime } from "./rate-limit";
 
 const shortenSchema = z.object({
   originalUrl: z.string().min(1).pipe(urlSchema),
@@ -11,6 +12,24 @@ const shortenSchema = z.object({
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limit check
+    const rateLimitKey = getRateLimitKey(request);
+    if (!checkRateLimit(rateLimitKey)) {
+      const resetTime = new Date(getResetTime(rateLimitKey));
+      return NextResponse.json(
+        {
+          error: "Too many requests. Please try again later.",
+          retryAfter: Math.ceil((resetTime.getTime() - Date.now()) / 1000),
+        },
+        { 
+          status: 429,
+          headers: {
+            "Retry-After": Math.ceil((resetTime.getTime() - Date.now()) / 1000).toString(),
+          },
+        }
+      );
+    }
+
     const body = await request.json();
     const { originalUrl, customSlug, expirationMinutes } = shortenSchema.parse(body);
 
